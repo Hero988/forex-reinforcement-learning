@@ -53,48 +53,39 @@ def collect_and_save_forex_data(symbols, timeframe, save_dir):
     start_present = "2024-01-01"
     end_present = datetime.now().strftime("%Y-%m-%d")
 
-    # Initialize empty DataFrames for consolidation
-    all_5_years_data = pd.DataFrame()
-    all_present_year_data = pd.DataFrame()
-
     for symbol in symbols:
         print(f"Collecting data for {symbol}...")
+
+        # Create a folder for the symbol
+        symbol_dir = os.path.join(save_dir, symbol)
+        os.makedirs(symbol_dir, exist_ok=True)
 
         # Gather data for the past 5 years
         df_5_years = gather_forex_data(symbol, timeframe, start_5_years, end_5_years)
         if df_5_years is not None:
-            df_5_years["symbol"] = symbol  # Add a column for the symbol
-            all_5_years_data = pd.concat([all_5_years_data, df_5_years])
-            print(f"Collected 5-year data for {symbol}.")
+            file_path_5_years = os.path.join(symbol_dir, f"{symbol}_5_years.csv")
+            df_5_years.to_csv(file_path_5_years)
+            print(f"Saved 5-year data for {symbol} to {file_path_5_years}.")
 
         # Gather data for 2024 to present
         df_present = gather_forex_data(symbol, timeframe, start_present, end_present)
         if df_present is not None:
-            df_present["symbol"] = symbol  # Add a column for the symbol
-            all_present_year_data = pd.concat([all_present_year_data, df_present])
-            print(f"Collected 2024-present data for {symbol}.")
-
-    # Save consolidated CSV files
-    file_path_5_years = os.path.join(save_dir, "all_symbols_5_years.csv")
-    all_5_years_data.to_csv(file_path_5_years)
-    print(f"Saved consolidated 5-year data for all symbols to {file_path_5_years}")
-
-    file_path_present = os.path.join(save_dir, "all_symbols_2024_present.csv")
-    all_present_year_data.to_csv(file_path_present)
-    print(f"Saved consolidated 2024-present data for all symbols to {file_path_present}")
+            file_path_present = os.path.join(symbol_dir, f"{symbol}_2024_present.csv")
+            df_present.to_csv(file_path_present)
+            print(f"Saved 2024-present data for {symbol} to {file_path_present}.")
 
 # List of currency pairs to collect
 symbols = [
-    "EURNZD", "GBPCAD", "GBPNZD", "AUDCAD", "GBPUSD", 
+    "EURUSD", "GBPCAD", "GBPNZD", "AUDCAD", "GBPUSD", 
     "AUDUSD", "AUDNZD", "AUDCAD", "AUDCHF", "AUDJPY",
     "NZDUSD", "CHFJPY", "EURGBP", "EURAUD", "EURCHF",
-    "EURJPY", "EURCAD", "GBPCHF", "GBPJPY", "USDCAD"
-    "CADCHF", "CADJPY", "GBPAUD", "USDCHF", "USDJPY"
+    "EURJPY", "EURCAD", "GBPCHF", "GBPJPY", "USDCAD",
+    "CADCHF", "CADJPY", "GBPAUD", "USDCHF", "USDJPY",
     "NZDCAD", "NZDCHF", "NZDJPY", 
 ]
 
 # Directory to save CSV files
-save_directory = "forex_data"
+save_directory = "forex_data_pair_per_folder"
 
 # Collect data for all symbols
 collect_and_save_forex_data(symbols, "1h", save_directory)
