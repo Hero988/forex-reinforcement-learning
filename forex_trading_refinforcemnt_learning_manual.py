@@ -171,6 +171,17 @@ class ForexTradingEnv(gym.Env):
         end = self.current_step
         obs = self.df.iloc[start:end].values  # Extract data as a NumPy array
 
+        # Adding current profit
+        current_profit = self.net_worth - self.initial_balance
+        if self.max_drawdown != 0:
+            # Adding current drawdown
+            current_drawdown = (self.max_drawdown-self.net_worth) / self.max_drawdown
+        else:
+            current_drawdown = 0
+
+        # Append all new features
+        obs = np.append(obs, [self.position, current_drawdown, current_profit, self.net_worth])
+
         # Flatten the observation
         obs = np.array(obs, dtype=np.float32).flatten()
         return obs
@@ -697,7 +708,7 @@ def train_evaluate_save(data_dir, output_dir, models):
             # Initialize the evaluating environment
             env_evaluating = ForexTradingEnv(df_eval, model_save_path_folder, initial_balance=10000, window_size=12, lot_size=10000)
 
-            state_dim = env_training.observation_space.shape[0]  # Flattened observation size
+            state_dim = env_training.observation_space.shape[0] + 4  # Add 4 for new features
             action_dim = env_training.action_space.n
 
             if model_name == 'PPO':
