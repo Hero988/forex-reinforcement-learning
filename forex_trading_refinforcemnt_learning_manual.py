@@ -189,7 +189,7 @@ class ForexTradingEnv(gym.Env):
         file_path = os.path.join(self.output_dir, "trade_diary_plot.png")
 
         # Plot net worth, high, and low
-        plt.plot(self.times, self.net_worths, label="Net Worth", linewidth=2)
+        plt.plot(self.times, self.net_worths[1:], label="Net Worth", linewidth=2)
         # plt.plot(self.times, self.net_worths_high, label="Net Worth High", linestyle="--", color="green")
         # plt.plot(self.times, self.net_worths_low, label="Net Worth Low", linestyle="--", color="red")
 
