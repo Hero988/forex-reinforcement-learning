@@ -214,7 +214,7 @@ class ForexTradingEnv(gym.Env):
         # Create a DataFrame from the data
         data = {
             "Time": self.times,
-            "Net Worth": self.net_worths,
+            "Net Worth": self.net_worths[1:],
             "Net Worth High": self.unrealized_highs,
             "Net Worth Low": self.unrealized_lows,
         }
